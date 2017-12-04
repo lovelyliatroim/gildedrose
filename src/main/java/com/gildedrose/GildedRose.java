@@ -10,56 +10,21 @@ class GildedRose {
 
     void updateValues() {
         for (Item currentItem : items) {
-            boolean isAgedBrieOrBackstagePass = isAgedBrie(currentItem) || isBackstagePass(currentItem);
+            GildedRoseItem gildedRoseItem = transformToGildedRoseItem(currentItem);
+            gildedRoseItem.updateQuality();
+            gildedRoseItem.updateSellIn();
 
-            if (isAgedBrieOrBackstagePass) {
-                if (currentItem.quality < 50) {
-                    currentItem.quality = currentItem.quality + 1;
-
-                    if (isBackstagePass(currentItem)) {
-                        if (currentItem.sellIn < 11) {
-                            if (currentItem.quality < 50) {
-                                currentItem.quality = currentItem.quality + 1;
-                            }
-                        }
-
-                        if (currentItem.sellIn < 6) {
-                            if (currentItem.quality < 50) {
-                                currentItem.quality = currentItem.quality + 1;
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (currentItem.quality > 0) {
-                    if (!currentItem.name.equals("Sulfuras, Hand of Ragnaros")) {
-                        currentItem.quality = currentItem.quality - 1;
-                    }
-                }
-            }
-
-            if (!currentItem.name.equals("Sulfuras, Hand of Ragnaros")) {
-                currentItem.sellIn = currentItem.sellIn - 1;
-            }
-
-            if (currentItem.sellIn < 0) {
-                if (!isAgedBrie(currentItem)) {
-                    if (!isBackstagePass(currentItem)) {
-                        if (currentItem.quality > 0) {
-                            if (!currentItem.name.equals("Sulfuras, Hand of Ragnaros")) {
-                                currentItem.quality = currentItem.quality - 1;
-                            }
-                        }
-                    } else {
-                        currentItem.quality = 0;
-                    }
-                } else {
-                    if (currentItem.quality < 50) {
-                        currentItem.quality = currentItem.quality + 1;
-                    }
-                }
-            }
         }
+    }
+
+    private GildedRoseItem transformToGildedRoseItem(Item legacyItem) {
+        if (isAgedBrie(legacyItem))
+            return new AgedBrieItem(legacyItem);
+        if (isSulfuras(legacyItem))
+            return new SulfurasItem(legacyItem);
+        if (isBackstagePass(legacyItem))
+            return new BackstagePassItem(legacyItem);
+        return new DefaultItem(legacyItem);
     }
 
     private boolean isBackstagePass(Item currentItem) {
@@ -68,5 +33,9 @@ class GildedRose {
 
     private boolean isAgedBrie(Item currentItem) {
         return currentItem.name.equals("Aged Brie");
+    }
+
+    private boolean isSulfuras(Item currentItem) {
+        return currentItem.name.equals("Sulfuras, Hand of Ragnaros");
     }
 }
