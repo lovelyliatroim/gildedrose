@@ -1,13 +1,14 @@
 package com.gildedrose;
 
 class GildedRose {
+
     Item[] items;
 
     public GildedRose(Item[] items) {
         this.items = items;
     }
 
-    public void updateQuality() {
+    public void updateValues() {
         for (int i = 0; i < items.length; i++) {
             if (!items[i].name.equals("Aged Brie")
                     && !items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
