@@ -4,31 +4,31 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({ "FieldCanBeLocal", "LocalCanBeFinal" })
 public class GildedRoseTest {
 
-    private final int qualityDecreaseSpeed = 1;
-    private final String genericItemName = "genericItemName";
-    private final int positiveSellIn = 40;
-    private final int quality = 30;
-    private final int sellInDecreaseSpeed = 1;
+    private static final int QUALITY_DECREASE_SPEED = 1;
+    private static final String GENERIC_ITEM_NAME = "GENERIC_ITEM_NAME";
+    private static final int POSITIVE_SELL_IN = 40;
+    private static final int QUALITY = 30;
+    private static final int SELL_IN_DECREASE_SPEED = 1;
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenTheQualityShouldDecrease() {
-        Item item = new Item(genericItemName, positiveSellIn, quality);
+        Item item = new Item(GENERIC_ITEM_NAME, POSITIVE_SELL_IN, QUALITY);
 
         new GildedRose(new Item[] { item }).updateQuality();
 
-        assertEquals(quality - qualityDecreaseSpeed, item.quality);
+        assertEquals(QUALITY - QUALITY_DECREASE_SPEED, item.quality);
     }
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenSellInShouldDecrease() {
-        Item item = new Item(genericItemName, positiveSellIn, quality);
+        Item item = new Item(GENERIC_ITEM_NAME, POSITIVE_SELL_IN, QUALITY);
 
         new GildedRose(new Item[] { item }).updateQuality();
 
-        assertEquals(positiveSellIn - sellInDecreaseSpeed, item.sellIn);
+        assertEquals(POSITIVE_SELL_IN - SELL_IN_DECREASE_SPEED, item.sellIn);
     }
 
 }
