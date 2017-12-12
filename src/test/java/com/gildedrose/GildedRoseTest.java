@@ -2,6 +2,7 @@ package com.gildedrose;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class GildedRoseTest {
@@ -95,6 +96,25 @@ public class GildedRoseTest {
         final int afterSellDate = -2;
         this.assertQualityAfterItemUpdated(18, this.createRegularItem(afterSellDate, 20));
 
+    }
+
+    @Test
+    @Ignore
+    public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsBeforeSellDate() {
+        final int beforeSellDate = 1;
+        this.assertQualityAfterItemUpdated(8, this.createConjuredItem(beforeSellDate, 10));
+        this.assertQualityAfterItemUpdated(8, this.createConjuredItem(0, 10));
+    }
+
+    @Test
+    @Ignore
+    public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsAfterSellDate() {
+        final int afterSellDate = -1;
+        this.assertQualityAfterItemUpdated(6, this.createConjuredItem(afterSellDate, 10));
+    }
+
+    private Item createConjuredItem(int sellIn, int quality) {
+        return new Item("Conjured", sellIn, quality);
     }
 
     private Item createRegularItem(int sellIn, int quality) {
