@@ -77,21 +77,28 @@ public class GildedRoseTest {
     @Test
     public void testNonSpecialItemQualityDecreasesByOne() {
         final int sellIn = 10;
-        this.assertQualityAfterItemUpdated(29, this.createItem("newItem", sellIn, 30));
-        this.assertQualityAfterItemUpdated(0, this.createItem("newItem", sellIn, 1));
+        this.assertQualityAfterItemUpdated(29, this.createRegularItem(sellIn, 30));
+        this.assertQualityAfterItemUpdated(0, this.createRegularItem(sellIn, 1));
     }
 
     @Test
-    public void testNonSpecialItemSellInDecreasesByOne() {
+    public void testRegularItemSellInDecreasesByOne() {
         final int quality = 10;
-        this.assertSellInAfterItemUpdated(9, this.createItem("newItem", 10, quality));
-        this.assertSellInAfterItemUpdated(0, this.createItem("newItem", 1, quality));
-        this.assertSellInAfterItemUpdated(-1, this.createItem("newItem", 0, quality));
-        this.assertSellInAfterItemUpdated(-11, this.createItem("newItem", -10, quality));
+        this.assertSellInAfterItemUpdated(9, this.createRegularItem(10, quality));
+        this.assertSellInAfterItemUpdated(0, this.createRegularItem( 1, quality));
+        this.assertSellInAfterItemUpdated(-1, this.createRegularItem( 0, quality));
+        this.assertSellInAfterItemUpdated(-11, this.createRegularItem( -10, quality));
     }
 
-    private Item createItem(String name, int sellIn, int quality) {
-        return new Item(name, sellIn, quality);
+    @Test
+    public void testRegularlItemQualityDegradesTwiceAsFastAfterSellDate() {
+        final int afterSellDate = -2;
+        this.assertQualityAfterItemUpdated(18, this.createRegularItem(afterSellDate, 20));
+
+    }
+
+    private Item createRegularItem(int sellIn, int quality) {
+        return new Item("Regular", sellIn, quality);
     }
 
     private Item createSulfuras(int sellIn, int quality) {
