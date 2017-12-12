@@ -50,8 +50,56 @@ public class GildedRoseTest {
         this.assertQualityAfterItemUpdated(65, this.createAgedBrie(negativeSellIn, 65));
     }
 
+    @Test
+    public void testBackstagePassQualityIncreasesWithSellInDecrease() {
+        this.assertQualityAfterItemUpdated(31, this.createBackstagePass(20, 30));
+        this.assertQualityAfterItemUpdated(31, this.createBackstagePass(11, 30));
+        this.assertQualityAfterItemUpdated(32, this.createBackstagePass(10, 30));
+        this.assertQualityAfterItemUpdated(32, this.createBackstagePass(6, 30));
+        this.assertQualityAfterItemUpdated(33, this.createBackstagePass(5, 30));
+        this.assertQualityAfterItemUpdated(33, this.createBackstagePass(1, 30));
+    }
+
+    @Test
+    public void testBackstagePassQualityDecreasesToZeroWhenSellInZeroOrNegative() {
+        this.assertQualityAfterItemUpdated(0, this.createBackstagePass(0, 30));
+        this.assertQualityAfterItemUpdated(0, this.createBackstagePass(-1, 30));
+    }
+
+    @Test
+    public void testQualityofAnItemIsNeverNegative() {
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createBackstagePass(4, 0));
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createBackstagePass(-1, 0));
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createAgedBrie(4, 0));
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createAgedBrie(-1, 0));
+    }
+
+    @Test
+    public void testNonSpecialItemQualityDecreasesByOne() {
+        final int sellIn = 10;
+        this.assertQualityAfterItemUpdated(29, this.createItem("newItem", sellIn, 30));
+        this.assertQualityAfterItemUpdated(0, this.createItem("newItem", sellIn, 1));
+    }
+
+    @Test
+    public void testNonSpecialItemSellInDecreasesByOne() {
+        final int quality = 10;
+        this.assertSellInAfterItemUpdated(9, this.createItem("newItem", 10, quality));
+        this.assertSellInAfterItemUpdated(0, this.createItem("newItem", 1, quality));
+        this.assertSellInAfterItemUpdated(-1, this.createItem("newItem", 0, quality));
+        this.assertSellInAfterItemUpdated(-11, this.createItem("newItem", -10, quality));
+    }
+
+    private Item createItem(String name, int sellIn, int quality) {
+        return new Item(name, sellIn, quality);
+    }
+
     private Item createSulfuras(int sellIn, int quality) {
         return new Item("Sulfuras, Hand of Ragnaros", sellIn, quality);
+    }
+
+    private Item createBackstagePass(int sellIn, int quality) {
+        return new Item("Backstage passes to a TAFKAL80ETC concert", sellIn, quality);
     }
 
     private Item createAgedBrie(int sellIn, int quality) {
@@ -67,6 +115,12 @@ public class GildedRoseTest {
         final Item[] items = new Item[] {item};
         this.updateQuality(items);
         assertEquals(expected, item.quality);
+    }
+
+    private void assertQualityGreaterThanZeroAfterItemUpdated(Item item) {
+        final Item[] items = new Item[] {item};
+        this.updateQuality(items);
+        assertTrue(item.quality >= 0);
     }
 
     private void assertSellInAfterItemUpdated(int expected, Item item) {
