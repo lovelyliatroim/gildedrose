@@ -8,14 +8,15 @@ import static org.junit.Assert.assertEquals;
 public class GildedRoseTest {
 
     private static final String GENERIC_NAME = "GENERIC_NAME";
+    private static final String AGED_BRIE = "Aged Brie";
     private static final int QUALITY = 30;
+    private static final int MINIMUM_QUALITY = 0;
     private static final int POSITIVE_SELL_IN = 40;
     private static final int NEGATIVE_SELL_IN = -40;
-
+    private static final int QUALITY_INCREASE_SPEED = 1;
     private static final int QUALITY_DECREASE_SPEED = 1;
     private static final int DOUBLE_QUALITY_DECREASE_SPEED = QUALITY_DECREASE_SPEED * 2;
     private static final int SELL_IN_DECREASE_SPEED = 1;
-    private static final int MINIMUM_QUALITY = 0;
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenTheQualityShouldDecrease() {
@@ -51,6 +52,15 @@ public class GildedRoseTest {
         updateItem(item);
 
         assertEquals(MINIMUM_QUALITY, item.quality);
+    }
+
+    @Test
+    public void givenAnAgedBrieThenTheQualityShouldIncrease() {
+        Item item = new Item(AGED_BRIE, POSITIVE_SELL_IN, QUALITY);
+
+        updateItem(item);
+
+        assertEquals(QUALITY + QUALITY_INCREASE_SPEED, item.quality);
     }
 
     private void updateItem(Item item) {
