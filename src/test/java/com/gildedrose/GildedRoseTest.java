@@ -20,6 +20,8 @@ public class GildedRoseTest {
     private static final int SELL_IN_DECREASE_SPEED = 1;
     private static final int MAXIMUM_QUALITY = 50;
     private static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
+    private static final String BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
+    public static final int SELL_IN_NORMAL_LIMIT = 11;
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenTheQualityShouldDecrease() {
@@ -92,6 +94,16 @@ public class GildedRoseTest {
 
         assertEquals(SELL_IN, item.sellIn);
     }
+
+    @Test
+    public void givenABackStagePassWithSellInGreaterThanNormalLimitThenQualityShouldIncrease() {
+        Item item = new Item(BACKSTAGE_PASS, SELL_IN_NORMAL_LIMIT, QUALITY);
+
+        updateItem(item);
+
+        assertEquals(QUALITY + QUALITY_INCREASE_SPEED, item.quality);
+    }
+
 
     private void updateItem(Item item) {
         new GildedRose(new Item[] { item }).updateQuality();
