@@ -99,15 +99,19 @@ public class GildedRoseTest {
     }
 
     @Test
-    @Ignore
     public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsBeforeSellDate() {
         final int beforeSellDate = 1;
         this.assertQualityAfterItemUpdated(8, this.createConjuredItem(beforeSellDate, 10));
-        this.assertQualityAfterItemUpdated(8, this.createConjuredItem(0, 10));
+
     }
 
     @Test
-    @Ignore
+    public void testConjuredItemQualityDegradesTwiceAsFastAsNormalItemsOnSellDate() {
+        final int sellDate = 0;
+        this.assertQualityAfterItemUpdated(6, this.createConjuredItem(sellDate, 10));
+    }
+
+    @Test
     public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsAfterSellDate() {
         final int afterSellDate = -1;
         this.assertQualityAfterItemUpdated(6, this.createConjuredItem(afterSellDate, 10));
