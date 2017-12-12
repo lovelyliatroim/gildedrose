@@ -17,6 +17,7 @@ public class GildedRoseTest {
     private static final int QUALITY_DECREASE_SPEED = 1;
     private static final int DOUBLE_QUALITY_DECREASE_SPEED = QUALITY_DECREASE_SPEED * 2;
     private static final int SELL_IN_DECREASE_SPEED = 1;
+    private static final int MAXIMUM_QUALITY = 50;
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenTheQualityShouldDecrease() {
@@ -61,6 +62,15 @@ public class GildedRoseTest {
         updateItem(item);
 
         assertEquals(QUALITY + QUALITY_INCREASE_SPEED, item.quality);
+    }
+
+    @Test
+    public void givenAnAgedBrieWithMaximumQualityThenTheQualityShouldStayTheSame() {
+        Item item = new Item(AGED_BRIE, POSITIVE_SELL_IN, MAXIMUM_QUALITY);
+
+        updateItem(item);
+
+        assertEquals(MAXIMUM_QUALITY, item.quality);
     }
 
     private void updateItem(Item item) {
