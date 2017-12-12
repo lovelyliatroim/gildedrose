@@ -8,27 +8,31 @@ import static org.junit.Assert.assertEquals;
 public class GildedRoseTest {
 
     private static final int QUALITY_DECREASE_SPEED = 1;
-    private static final String GENERIC_ITEM_NAME = "GENERIC_ITEM_NAME";
+    private static final String GENERIC_NAME = "GENERIC_NAME";
     private static final int POSITIVE_SELL_IN = 40;
     private static final int QUALITY = 30;
     private static final int SELL_IN_DECREASE_SPEED = 1;
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenTheQualityShouldDecrease() {
-        Item item = new Item(GENERIC_ITEM_NAME, POSITIVE_SELL_IN, QUALITY);
+        Item item = new Item(GENERIC_NAME, POSITIVE_SELL_IN, QUALITY);
 
-        new GildedRose(new Item[] { item }).updateQuality();
+        updateItem(item);
 
         assertEquals(QUALITY - QUALITY_DECREASE_SPEED, item.quality);
     }
 
     @Test
     public void givenAGenericItemWithPositiveSellInThenSellInShouldDecrease() {
-        Item item = new Item(GENERIC_ITEM_NAME, POSITIVE_SELL_IN, QUALITY);
+        Item item = new Item(GENERIC_NAME, POSITIVE_SELL_IN, QUALITY);
 
-        new GildedRose(new Item[] { item }).updateQuality();
+        updateItem(item);
 
         assertEquals(POSITIVE_SELL_IN - SELL_IN_DECREASE_SPEED, item.sellIn);
+    }
+
+    private void updateItem(Item item) {
+        new GildedRose(new Item[] { item }).updateQuality();
     }
 
 }
