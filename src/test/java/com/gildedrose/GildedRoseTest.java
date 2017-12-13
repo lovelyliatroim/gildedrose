@@ -1,120 +1,150 @@
 package com.gildedrose;
 
-import static org.junit.Assert.*;
-
-import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GildedRoseTest {
 
+    final int NEGATIVE_SELL_IN = -20;
+    final int ZERO_SELL_IN = 0;
+    final int POSITIVE_SELL_IN = 20;
+    final int SULFURAS_QUALITY = 80;
+    final int POSITIVE_QUALITY = 14;
+    final int POSITIVE_QUALITY_LESS_THAN_50 = 30;
+    final int POSITIVE_QUALITY_50 = 50;
+    final int SELL_IN_MORE_THAN_10_DAYS = 15;
+    final int SELL_IN_10_DAYS_OR_LESS = 10;
+    final int SELL_IN_5_DAYS_OR_LESS = 5;
+    final int ONE_QUALITY = 1;
+    final int ZERO_QUALITY = 0;
+
+    // Regular item tests
     @Test
-    public void testSulfurasNeverLoosesQuality() {
-        this.assertQualityAfterItemUpdated(3, this.createSulfuras(2, 3));
-        this.assertQualityAfterItemUpdated(0, this.createSulfuras(2, 0));
-        this.assertQualityAfterItemUpdated(10000, this.createSulfuras(2, 10_000));
+    public void testRegularItemQualityIsNeverNegative() {
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createRegularItem(NEGATIVE_SELL_IN, ZERO_QUALITY));
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createRegularItem(ZERO_SELL_IN, ZERO_QUALITY));
+        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createRegularItem(POSITIVE_SELL_IN, ZERO_QUALITY));
     }
 
     @Test
-    public void testSulfurasSellInIsNeverDecreased() {
-        this.assertSellInAfterItemUpdated(-20, this.createSulfuras(-20, 3));
-        this.assertSellInAfterItemUpdated(0, this.createSulfuras(0, 0));
-        this.assertSellInAfterItemUpdated(220, this.createSulfuras(220, 10_000));
+    public void testRegularItemQualityDecreasesByOneBeforeSellDate() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 1, this.createRegularItem(POSITIVE_SELL_IN, POSITIVE_QUALITY));
     }
 
     @Test
-    public void testAgedBrieQualityIncreasesWithOneWhenSellInPositiveAndQualityLessThan50() {
-        final int positiveSellIn = 15;
-        this.assertQualityAfterItemUpdated(9, this.createAgedBrie(positiveSellIn, 8));
-        this.assertQualityAfterItemUpdated(1, this.createAgedBrie(positiveSellIn, 0));
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(positiveSellIn, 49));
-    }
-
-    @Test
-    public void testAgedBrieQualityIncreasesWithTwoWhenSellInNegativeAndQualityLessThan50() {
-        final int negativeSellIn = -15;
-        this.assertQualityAfterItemUpdated(10, this.createAgedBrie(negativeSellIn, 8));
-        this.assertQualityAfterItemUpdated(2, this.createAgedBrie(negativeSellIn, 0));
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(negativeSellIn, 48));
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(negativeSellIn, 49));
-    }
-
-    @Test
-    public void testAgedBrieQualityWillNotIncreaseForQualityGreaterOrEqual50() {
-        final int positiveSellIn = 15;
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(positiveSellIn, 49));
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(positiveSellIn, 50));
-        this.assertQualityAfterItemUpdated(65, this.createAgedBrie(positiveSellIn, 65));
-
-        final int negativeSellIn = -15;
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(negativeSellIn, 49));
-        this.assertQualityAfterItemUpdated(50, this.createAgedBrie(negativeSellIn, 50));
-        this.assertQualityAfterItemUpdated(65, this.createAgedBrie(negativeSellIn, 65));
-    }
-
-    @Test
-    public void testBackstagePassQualityIncreasesWithSellInDecrease() {
-        this.assertQualityAfterItemUpdated(31, this.createBackstagePass(20, 30));
-        this.assertQualityAfterItemUpdated(31, this.createBackstagePass(11, 30));
-        this.assertQualityAfterItemUpdated(32, this.createBackstagePass(10, 30));
-        this.assertQualityAfterItemUpdated(32, this.createBackstagePass(6, 30));
-        this.assertQualityAfterItemUpdated(33, this.createBackstagePass(5, 30));
-        this.assertQualityAfterItemUpdated(33, this.createBackstagePass(1, 30));
-    }
-
-    @Test
-    public void testBackstagePassQualityDecreasesToZeroWhenSellInZeroOrNegative() {
-        this.assertQualityAfterItemUpdated(0, this.createBackstagePass(0, 30));
-        this.assertQualityAfterItemUpdated(0, this.createBackstagePass(-1, 30));
-    }
-
-    @Test
-    public void testQualityofAnItemIsNeverNegative() {
-        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createBackstagePass(4, 0));
-        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createBackstagePass(-1, 0));
-        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createAgedBrie(4, 0));
-        this.assertQualityGreaterThanZeroAfterItemUpdated(this.createAgedBrie(-1, 0));
-    }
-
-    @Test
-    public void testNonSpecialItemQualityDecreasesByOne() {
-        final int sellIn = 10;
-        this.assertQualityAfterItemUpdated(29, this.createRegularItem(sellIn, 30));
-        this.assertQualityAfterItemUpdated(0, this.createRegularItem(sellIn, 1));
-    }
-
-    @Test
-    public void testRegularItemSellInDecreasesByOne() {
-        final int quality = 10;
-        this.assertSellInAfterItemUpdated(9, this.createRegularItem(10, quality));
-        this.assertSellInAfterItemUpdated(0, this.createRegularItem( 1, quality));
-        this.assertSellInAfterItemUpdated(-1, this.createRegularItem( 0, quality));
-        this.assertSellInAfterItemUpdated(-11, this.createRegularItem( -10, quality));
+    public void testRegularItemQualityDecreasesByTwoAtSellDate() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 2, this.createRegularItem(ZERO_SELL_IN, POSITIVE_QUALITY));
     }
 
     @Test
     public void testRegularlItemQualityDegradesTwiceAsFastAfterSellDate() {
-        final int afterSellDate = -2;
-        this.assertQualityAfterItemUpdated(18, this.createRegularItem(afterSellDate, 20));
-
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 2, this.createRegularItem(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
     }
 
     @Test
-    public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsBeforeSellDate() {
-        final int beforeSellDate = 1;
-        this.assertQualityAfterItemUpdated(8, this.createConjuredItem(beforeSellDate, 10));
+    public void testRegularItemSellInDecreasesByOne() {
+        this.assertSellInAfterItemUpdated(POSITIVE_SELL_IN - 1, this.createRegularItem(POSITIVE_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(ZERO_SELL_IN - 1, this.createRegularItem(ZERO_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(NEGATIVE_SELL_IN - 1, this.createRegularItem(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
+    }
 
+    // Sulfuras tests
+    @Test
+    public void testSulfurasNeverLoosesQuality() {
+        this.assertQualityAfterItemUpdated(SULFURAS_QUALITY, this.createSulfuras(POSITIVE_SELL_IN, SULFURAS_QUALITY));
+        this.assertQualityAfterItemUpdated(SULFURAS_QUALITY, this.createSulfuras(ZERO_SELL_IN, SULFURAS_QUALITY));
+        this.assertQualityAfterItemUpdated(SULFURAS_QUALITY, this.createSulfuras(NEGATIVE_SELL_IN, SULFURAS_QUALITY));
     }
 
     @Test
-    public void testConjuredItemQualityDegradesTwiceAsFastAsNormalItemsOnSellDate() {
-        final int sellDate = 0;
-        this.assertQualityAfterItemUpdated(6, this.createConjuredItem(sellDate, 10));
+    public void testSulfurasSellInIsNeverDecreased() {
+        this.assertSellInAfterItemUpdated(NEGATIVE_SELL_IN, this.createSulfuras(NEGATIVE_SELL_IN, SULFURAS_QUALITY));
+        this.assertSellInAfterItemUpdated(ZERO_SELL_IN, this.createSulfuras(ZERO_SELL_IN, SULFURAS_QUALITY));
+        this.assertSellInAfterItemUpdated(POSITIVE_SELL_IN, this.createSulfuras(POSITIVE_SELL_IN, SULFURAS_QUALITY));
+    }
+
+    // Aged Brie tests
+    @Test
+    public void testAgedBrieQualityIncreasesWithOneWhenSellInPositiveAndQualityLessThan50() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY_LESS_THAN_50 + 1, this.createAgedBrie(POSITIVE_SELL_IN, POSITIVE_QUALITY_LESS_THAN_50));
     }
 
     @Test
-    public void testConjuredItemQualityDegradesTwiceAsFastAsNormaItemsAfterSellDate() {
-        final int afterSellDate = -1;
-        this.assertQualityAfterItemUpdated(6, this.createConjuredItem(afterSellDate, 10));
+    public void testAgedBrieQualityWillNotIncreaseForQualityEqual50() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY_50, this.createAgedBrie(POSITIVE_SELL_IN, POSITIVE_QUALITY_50));
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY_50, this.createAgedBrie(NEGATIVE_SELL_IN, POSITIVE_QUALITY_50));
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY_50, this.createAgedBrie(ZERO_SELL_IN, POSITIVE_QUALITY_50));
+    }
+
+    @Test
+    public void testAgedBrieQualityIncreasesWithTwoWhenSellInNegativeAndQualityLessThan50() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY_LESS_THAN_50 + 2, this.createAgedBrie(NEGATIVE_SELL_IN, POSITIVE_QUALITY_LESS_THAN_50));
+    }
+
+    @Test
+    public void testAgedBrieItemSellInDecreasesByOne() {
+        this.assertSellInAfterItemUpdated(POSITIVE_SELL_IN - 1, this.createAgedBrie(POSITIVE_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(ZERO_SELL_IN - 1, this.createAgedBrie(ZERO_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(NEGATIVE_SELL_IN - 1, this.createAgedBrie(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    // Backstage pass tests
+    @Test
+    public void testBackstagePassQualityIncreasesWithOneIfMoreThanTenDaysBeforeSellIn() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY + 1, this.createBackstagePass(SELL_IN_MORE_THAN_10_DAYS, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testBackstagePassQualityIncreasesWithTwoIfTenDaysOrLessBeforeSellIn() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY + 2, this.createBackstagePass(SELL_IN_10_DAYS_OR_LESS, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testBackstagePassQualityIncreasesWithThreeIfFiveDaysOrLessBeforeSellIn() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY + 3, this.createBackstagePass(SELL_IN_5_DAYS_OR_LESS, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testBackstagePassQualityDecreasesToZeroWhenSellInZeroOrNegative() {
+        this.assertQualityAfterItemUpdated(ZERO_QUALITY, this.createBackstagePass(ZERO_SELL_IN, POSITIVE_QUALITY));
+        this.assertQualityAfterItemUpdated(ZERO_QUALITY, this.createBackstagePass(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testBackstagePassItemSellInDecreasesByOne() {
+        this.assertSellInAfterItemUpdated(POSITIVE_SELL_IN - 1, this.createBackstagePass(POSITIVE_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(ZERO_SELL_IN - 1, this.createBackstagePass(ZERO_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(NEGATIVE_SELL_IN - 1, this.createBackstagePass(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    // Conjured items tests
+    @Test
+    public void testConjuredItemQualityDegradesTwiceAsFastAsRegularItemsBeforeSellDate() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 2, this.createConjuredItem(POSITIVE_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testConjuredItemQualityDegradesTwiceAsFastAsRegularItemsOnSellDate() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 4, this.createConjuredItem(ZERO_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testConjuredItemQualityDegradesTwiceAsFastAsRegularItemsWhenQualityIsOne() {
+        this.assertQualityAfterItemUpdated(ZERO_QUALITY, this.createConjuredItem(POSITIVE_SELL_IN, ONE_QUALITY));
+    }
+
+    @Test
+    public void testConjuredItemQualityDegradesTwiceAsFastAsRegularItemsAfterSellDate() {
+        this.assertQualityAfterItemUpdated(POSITIVE_QUALITY - 4, this.createConjuredItem(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
+    }
+
+    @Test
+    public void testConjuredItemSellInDecreasesByOne() {
+        this.assertSellInAfterItemUpdated(POSITIVE_SELL_IN - 1, this.createConjuredItem(POSITIVE_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(ZERO_SELL_IN - 1, this.createConjuredItem(ZERO_SELL_IN, POSITIVE_QUALITY));
+        this.assertSellInAfterItemUpdated(NEGATIVE_SELL_IN - 1, this.createConjuredItem(NEGATIVE_SELL_IN, POSITIVE_QUALITY));
     }
 
     private Item createConjuredItem(int sellIn, int quality) {
