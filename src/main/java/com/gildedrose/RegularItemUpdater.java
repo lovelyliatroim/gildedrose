@@ -1,9 +1,9 @@
 package com.gildedrose;
 
-public class RegularItemQualityUpdater implements ItemQualityUpdater {
+public class RegularItemUpdater implements ItemUpdater {
 
     @Override
-    public void updateQuality(Item item) {
+    public void update(Item item) {
         if (item.quality > 0) {
             item.quality = item.quality - 1;
         }

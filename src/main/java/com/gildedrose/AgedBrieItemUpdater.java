@@ -1,9 +1,9 @@
 package com.gildedrose;
 
-public class AgedBrieItemQualityUpdater implements ItemQualityUpdater {
+public class AgedBrieItemUpdater implements ItemUpdater {
 
     @Override
-    public void updateQuality(Item item) {
+    public void update(Item item) {
         if (item.quality < 50) {
             item.quality++;
         }

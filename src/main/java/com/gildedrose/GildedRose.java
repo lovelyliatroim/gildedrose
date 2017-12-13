@@ -1,5 +1,8 @@
 package com.gildedrose;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class GildedRose {
 
     public static final String AGED_BRIE = "Aged Brie";
@@ -7,44 +10,33 @@ class GildedRose {
     public static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
     public static final String CONJURED = "Conjured";
 
-    private Item[] items;
+    private final Map<String, ItemUpdater> CUSTOM_ITEM_UPDATERS = new HashMap<>();
+    private final ItemUpdater REGULAR_ITEM_UPDATER = new RegularItemUpdater();
+
+    Item[] items;
 
     public GildedRose(Item[] items) {
+        this.initCustomItemUpdaters();
         this.items = items;
+    }
+
+    private void initCustomItemUpdaters() {
+        this.CUSTOM_ITEM_UPDATERS.put(AGED_BRIE, new AgedBrieItemUpdater());
+        this.CUSTOM_ITEM_UPDATERS.put(BACKSTAGE_PASS, new BackStagePassItemUpdater());
+        this.CUSTOM_ITEM_UPDATERS.put(SULFURAS, new SulfurasItemUpdater());
+        this.CUSTOM_ITEM_UPDATERS.put(CONJURED, new ConjuredItemUpdater());
     }
 
     public void updateQuality() {
         for (Item item : items) {
-            this.getQualityUpdater(item).updateQuality(item);
+            this.getQualityUpdater(item).update(item);
         }
     }
 
-    private ItemQualityUpdater getQualityUpdater(Item item) {
-        if (this.isSulfuras(item)) {
-            return new SulfurasItemQualityUpdater();
-        } else if (this.isAgedBrie(item)) {
-            return new AgedBrieItemQualityUpdater();
-        } else if (this.isBackStagePass(item)) {
-            return new BackStagePassItemQualityUpdater();
-        } else if (this.isConjured(item)) {
-            return new ConjuredItemQualifierUpdater();
-        }
-        return new RegularItemQualityUpdater();
+    private ItemUpdater getQualityUpdater(Item item) {
+        final ItemUpdater updater = this.CUSTOM_ITEM_UPDATERS.get(item.name);
+
+        return updater != null ? updater : this.REGULAR_ITEM_UPDATER;
     }
 
-    private boolean isAgedBrie(Item item) {
-        return item != null && item.name.equals(AGED_BRIE);
-    }
-
-    private boolean isConjured(Item item) {
-        return item != null && item.name.equals(CONJURED);
-    }
-
-    private boolean isBackStagePass(Item item) {
-        return item != null && item.name.equals(BACKSTAGE_PASS);
-    }
-
-    private boolean isSulfuras(Item item) {
-        return item != null && item.name.equals(SULFURAS);
-    }
 }
